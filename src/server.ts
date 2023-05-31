@@ -1,13 +1,22 @@
 import express from "express";
 import { createServer } from "http";
-import io from "socket.io";
+import { Server } from "socket.io";
 
 const app = express();
 const server = createServer(app);
-const ioServer = io.Server(server);
+const io = new Server(server);
 
 app.get("/", (req, res) => {
-  return res.json("Hello world");
+  return res.sendFile(__dirname + "/index.html");
+});
+
+io.on("connection", () => {
+  console.log("a user connected");
+  // console.log(io.sockets.sockets.size); -- Check current connections
+});
+
+io.off("connection", () => {
+  console.log("user disconnected");
 });
 
 server.listen(process.env.PORT || 3000, () => {
